@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cybersecurity Guide — Claude</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf9f7;
+  --surface: #ffffff;
+  --surface2: #f5f3ef;
+  --border: rgba(0,0,0,0.08);
+  --border-med: rgba(0,0,0,0.14);
+  --text: #1a1916;
+  --text-muted: #6b6963;
+  --text-hint: #9e9a94;
+  --coral-50: #FAECE7;
+  --coral-100: #F5C4B3;
+  --coral-200: #F0997B;
+  --coral-400: #D85A30;
+  --coral-600: #993C1D;
+  --coral-800: #712B13;
+  --amber-50: #FAEEDA;
+  --amber-100: #FAC775;
+  --amber-200: #EF9F27;
+  --amber-400: #BA7517;
+  --amber-600: #854F0B;
+  --amber-800: #633806;
+  --teal-50: #E1F5EE;
+  --teal-100: #9FE1CB;
+  --teal-200: #5DCAA5;
+  --teal-400: #1D9E75;
+  --teal-600: #0F6E56;
+  --teal-800: #085041;
+  --purple-50: #EEEDFE;
+  --purple-100: #CECBF6;
+  --purple-400: #7F77DD;
+  --purple-600: #534AB7;
+  --purple-800: #3C3489;
+  --gray-50: #F1EFE8;
+  --gray-100: #D3D1C7;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; min-height:100vh; }
+
+.topbar {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:rgba(250,249,247,0.93); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border); height:56px;
+  display:flex; align-items:center; padding:0 1.5rem; gap:0.75rem;
+}
+.logo { display:flex; align-items:center; gap:0.5rem; font-weight:800; font-size:0.95rem; color:var(--text); }
+.logo-dot { width:26px; height:26px; background:var(--coral-400); border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:0.85rem; color:white; }
+.topbar-sep { width:1px; height:18px; background:var(--border-med); margin:0 0.25rem; }
+.topbar-sub { font-size:0.75rem; color:var(--text-muted); letter-spacing:0.04em; }
+.nav { margin-left:auto; display:flex; gap:2px; }
+.nav-btn { background:none; border:none; font-family:'Sora',sans-serif; font-size:0.78rem; font-weight:600; color:var(--text-muted); padding:0.35rem 0.85rem; border-radius:7px; cursor:pointer; transition:all 0.15s; }
+.nav-btn:hover { background:var(--surface2); color:var(--text); }
+.nav-btn.active { background:var(--coral-50); color:var(--coral-600); }
+
+.page { display:none; padding-top:56px; min-height:100vh; animation:fadein 0.3s ease; }
+.page.active { display:block; }
+@keyframes fadein { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+
+.hero { max-width:700px; margin:0 auto; padding:4rem 2rem 2rem; text-align:center; }
+.hero-chip { display:inline-flex; align-items:center; gap:6px; background:var(--coral-50); border:1px solid var(--coral-100); border-radius:50px; padding:0.25rem 0.85rem; font-size:0.7rem; font-weight:700; color:var(--coral-600); letter-spacing:0.07em; text-transform:uppercase; margin-bottom:1.25rem; }
+.hero h1 { font-size:clamp(2rem,5vw,3rem); font-weight:800; letter-spacing:-0.03em; line-height:1.1; margin-bottom:1rem; }
+.hero h1 em { font-style:normal; color:var(--coral-400); }
+.hero p { font-size:0.98rem; color:var(--text-muted); line-height:1.75; max-width:480px; margin:0 auto 2.5rem; }
+
+.home-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; max-width:700px; margin:0 auto; padding:0 2rem 4rem; }
+.home-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1.5rem 1.25rem; cursor:pointer; text-align:left; transition:all 0.18s; }
+.home-card:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.08); border-color:var(--border-med); }
+.home-card-accent { height:3px; border-radius:3px; margin-bottom:1rem; }
+.home-card h3 { font-size:0.95rem; font-weight:700; margin-bottom:0.4rem; }
+.home-card p { font-size:0.78rem; color:var(--text-muted); line-height:1.55; margin-bottom:0.85rem; }
+.home-card-cta { font-size:0.72rem; font-weight:700; }
+
+.content { max-width:720px; margin:0 auto; padding:2.5rem 2rem 5rem; }
+.page-top { margin-bottom:2rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
+.page-chip { display:inline-flex; align-items:center; gap:5px; border-radius:50px; padding:0.22rem 0.75rem; font-size:0.68rem; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; margin-bottom:0.85rem; }
+.page-top h2 { font-size:clamp(1.6rem,4vw,2.2rem); font-weight:800; letter-spacing:-0.03em; line-height:1.15; margin-bottom:0.6rem; }
+.page-top p { font-size:0.9rem; color:var(--text-muted); line-height:1.7; }
+
+.stepper-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:1.25rem; }
+.step-tab { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:0.35rem 0.85rem; font-family:'Sora',sans-serif; font-size:0.75rem; font-weight:600; color:var(--text-muted); cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:6px; }
+.step-tab:hover { background:var(--surface); color:var(--text); border-color:var(--border-med); }
+.step-tab.active { color:white; border-color:transparent; }
+.step-num { width:18px; height:18px; border-radius:50%; background:rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700; font-family:'DM Mono',monospace; }
+
+.step-panel { display:none; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; animation:fadein 0.2s ease; }
+.step-panel.active { display:block; }
+.step-panel-header { padding:1.2rem 1.5rem 1rem; border-bottom:1px solid var(--border); }
+.step-panel-header h3 { font-size:1.05rem; font-weight:700; margin-bottom:0.35rem; }
+.step-panel-header p { font-size:0.84rem; color:var(--text-muted); line-height:1.6; }
+.step-panel-body { padding:1.2rem 1.5rem; }
+
+.factoid { display:flex; gap:0.75rem; align-items:flex-start; background:var(--surface2); border-radius:10px; padding:0.85rem 1rem; margin-bottom:0.75rem; font-size:0.83rem; line-height:1.6; color:var(--text-muted); }
+.factoid:last-child { margin-bottom:0; }
+.factoid-icon { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0; }
+
+.callout { border-radius:10px; padding:0.9rem 1.1rem; margin-bottom:0.75rem; font-size:0.83rem; line-height:1.65; display:flex; gap:0.65rem; align-items:flex-start; }
+.callout:last-child { margin-bottom:0; }
+.callout-ico { font-size:0.9rem; flex-shrink:0; margin-top:1px; }
+.callout.warn { background:var(--coral-50); border:1px solid var(--coral-100); color:var(--coral-800); }
+.callout.good { background:var(--teal-50); border:1px solid var(--teal-100); color:var(--teal-800); }
+.callout.info { background:var(--amber-50); border:1px solid var(--amber-100); color:var(--amber-800); }
+.callout.note { background:var(--purple-50); border:1px solid var(--purple-100); color:var(--purple-800); }
+
+.cklist { list-style:none; }
+.cklist li { display:flex; gap:0.65rem; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border); font-size:0.84rem; color:var(--text-muted); }
+.cklist li:last-child { border-bottom:none; }
+.ck { width:20px; height:20px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.65rem; flex-shrink:0; font-weight:700; }
+.ck.y { background:var(--teal-50); color:var(--teal-600); }
+.ck.n { background:var(--coral-50); color:var(--coral-600); }
+
+.step-nav { display:flex; justify-content:space-between; align-items:center; padding:0.85rem 1.5rem; border-top:1px solid var(--border); background:var(--surface2); }
+.snav-btn { background:none; border:1px solid var(--border); border-radius:8px; padding:0.35rem 0.85rem; font-family:'Sora',sans-serif; font-size:0.75rem; font-weight:600; color:var(--text-muted); cursor:pointer; transition:all 0.15s; }
+.snav-btn:hover { background:var(--surface); color:var(--text); }
+.snav-btn:disabled { opacity:0.3; cursor:default; }
+.snav-btn.primary { color:white; border-color:transparent; }
+.step-counter { font-size:0.72rem; color:var(--text-hint); font-family:'DM Mono',monospace; }
+.mono { font-family:'DM Mono',monospace; font-size:0.82em; background:var(--gray-50); border:1px solid var(--border); border-radius:4px; padding:0.1em 0.4em; color:var(--coral-600); }
+footer { text-align:center; padding:1.5rem; font-size:0.72rem; color:var(--text-hint); border-top:1px solid var(--border); margin-top:1rem; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo"><div class="logo-dot">✦</div>Claude</div>
+  <div class="topbar-sep"></div>
+  <span class="topbar-sub">Cybersecurity Guide</span>
+  <nav class="nav">
+    <button class="nav-btn active" onclick="goPage('home',this)">Home</button>
+    <button class="nav-btn" onclick="goPage('hacks',this)">Hacks</button>
+    <button class="nav-btn" onclick="goPage('viruses',this)">Viruses</button>
+    <button class="nav-btn" onclick="goPage('scare',this)">Scareware</button>
+    <button class="nav-btn" onclick="goPage('exploit',this)">Exploitation</button>
+  </nav>
+</header>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <div class="hero">
+    <div class="hero-chip">✦ Official Guide · By Quinn & Claude</div>
+    <h1>Stay Safe<br>on the <em>Internet</em></h1>
+    <p>The internet is an amazing place — but it also has some sneaky dangers. This guide teaches you what they are, how they work, and how to stay safe.</p>
+  </div>
+  <div class="home-cards">
+    <div class="home-card" onclick="goPage('hacks', document.querySelectorAll('.nav-btn')[1])">
+      <div class="home-card-accent" style="background:linear-gradient(90deg,var(--coral-400),var(--amber-200));"></div>
+      <h3>How Hacks Work</h3>
+      <p>Learn the different ways bad people try to break into accounts and computers.</p>
+      <div class="home-card-cta" style="color:var(--coral-600);">Explore →</div>
+    </div>
+    <div class="home-card" onclick="goPage('viruses', document.querySelectorAll('.nav-btn')[2])">
+      <div class="home-card-accent" style="background:linear-gradient(90deg,var(--teal-400),var(--teal-200));"></div>
+      <h3>Computer Viruses</h3>
+      <p>Find out how viruses sneak onto computers and how to protect yourself.</p>
+      <div class="home-card-cta" style="color:var(--teal-600);">Explore →</div>
+    </div>
+    <div class="home-card" onclick="goPage('scare', document.querySelectorAll('.nav-btn')[3])">
+      <div class="home-card-accent" style="background:linear-gradient(90deg,var(--purple-400),var(--purple-100));"></div>
+      <h3>Scareware</h3>
+      <p>Scareware tries to frighten you into clicking things. Learn to spot it!</p>
+      <div class="home-card-cta" style="color:var(--purple-600);">Explore →</div>
+    </div>
+    <div class="home-card" onclick="goPage('exploit', document.querySelectorAll('.nav-btn')[4])">
+      <div class="home-card-accent" style="background:linear-gradient(90deg,var(--amber-400),var(--amber-100));"></div>
+      <h3>Exploitation of Legitimate Tools</h3>
+      <p>Bad people hijack normal features like browser notifications to trick you.</p>
+      <div class="home-card-cta" style="color:var(--amber-600);">Explore →</div>
+    </div>
+  </div>
+  <footer>Made with Claude · Cybersecurity Education for Young Learners</footer>
+</div>
+
+<!-- HACKS -->
+<div id="hacks" class="page">
+  <div class="content">
+    <div class="page-top">
+      <div class="page-chip" style="background:var(--coral-50);border:1px solid var(--coral-100);color:var(--coral-600);">Chapter 1 · Hacks</div>
+      <h2>How Hacks Work</h2>
+      <p>A "hack" is when someone tries to get into a computer or account without permission. Tap each type below to learn how it works.</p>
+    </div>
+    <div class="stepper-tabs">
+      <button class="step-tab active" style="background:var(--coral-400);" data-s="hacks" data-i="0" onclick="setStep(this)"><div class="step-num">1</div>Phishing</button>
+      <button class="step-tab" data-s="hacks" data-i="1" onclick="setStep(this)"><div class="step-num">2</div>Password Attacks</button>
+      <button class="step-tab" data-s="hacks" data-i="2" onclick="setStep(this)"><div class="step-num">3</div>Social Engineering</button>
+      <button class="step-tab" data-s="hacks" data-i="3" onclick="setStep(this)"><div class="step-num">4</div>Man-in-the-Middle</button>
+    </div>
+    <div class="step-panel active" data-s="hacks" data-i="0">
+      <div class="step-panel-header"><h3>Phishing</h3><p>Phishing (sounds like "fishing") is when a bad person sends a fake message that looks real — trying to trick you into giving away your password.</p></div>
+      <div class="step-panel-body">
+        <div class="callout warn"><div class="callout-ico">⚠</div><div><strong>Example:</strong> You get an email saying "Your account will be deleted! Click here now to save it!" — but the link goes to a fake website that steals your password.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--coral-50);">🔎</div><div>Check the sender's email address carefully. Fake ones look almost right but have a small typo — like <span class="mono">support@g00gle.com</span> instead of <span class="mono">google.com</span></div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--amber-50);">🚨</div><div>Phishing messages always use scary, urgent words like "Act NOW!" or "Your account is in DANGER!" Real companies do not panic you like that.</div></div>
+        <div class="callout good"><div class="callout-ico">✓</div><div><strong>Safety rule:</strong> When in doubt, never click the link. Go directly to the website yourself by typing the address in your browser.</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" disabled>← Back</button><span class="step-counter">1 of 4</span><button class="snav-btn primary" style="background:var(--coral-400);" onclick="jump('hacks',1)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="hacks" data-i="1">
+      <div class="step-panel-header"><h3>Password Attacks</h3><p>Hackers use programs that guess thousands of passwords very fast. If your password is simple, it gets cracked in seconds!</p></div>
+      <div class="step-panel-body">
+        <div class="callout warn"><div class="callout-ico">⚠</div><div><strong>Weak passwords</strong> that get guessed instantly: "password", "123456", your name, your birthday.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--teal-50);">🔑</div><div>A <strong>strong password</strong> is long and mixes capital letters, numbers, and symbols. Example: <span class="mono">T1ger$JumpH1gh!</span> — much harder to crack!</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--amber-50);">💡</div><div>Never use the same password on two different websites. If one gets hacked, the bad person could get into your other accounts too.</div></div>
+        <div class="callout good"><div class="callout-ico">✓</div><div><strong>Safety rule:</strong> Ask a trusted adult about using a password manager — it remembers all your strong passwords for you!</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('hacks',0)">← Back</button><span class="step-counter">2 of 4</span><button class="snav-btn primary" style="background:var(--coral-400);" onclick="jump('hacks',2)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="hacks" data-i="2">
+      <div class="step-panel-header"><h3>Social Engineering</h3><p>This type of hack does not use computers — it tricks people instead! The hacker pretends to be someone trustworthy to get your secret info.</p></div>
+      <div class="step-panel-body">
+        <div class="callout note"><div class="callout-ico">💬</div><div><strong>Example:</strong> Someone calls and says "Hi, I'm from your internet company. I need your password to fix a problem." — Real companies NEVER ask for your password this way.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--purple-50);">🎭</div><div>Hackers might pretend to be: a tech helper, a game company, a teacher, or even a friend. They want you to feel comfortable so you share private info.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--coral-50);">⚡</div><div>They often create urgency to stop you from thinking carefully: "You only have 5 minutes before your account is gone forever!"</div></div>
+        <div class="callout good"><div class="callout-ico">✓</div><div><strong>Safety rule:</strong> No real company or helper will ever ask for your password. If someone does — it is always a trick. Tell a trusted adult immediately.</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('hacks',1)">← Back</button><span class="step-counter">3 of 4</span><button class="snav-btn primary" style="background:var(--coral-400);" onclick="jump('hacks',3)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="hacks" data-i="3">
+      <div class="step-panel-header"><h3>Man-in-the-Middle Attack</h3><p>Imagine passing a note to a friend, but someone in the middle secretly reads it. This attack does the same — but with your internet messages!</p></div>
+      <div class="step-panel-body">
+        <div class="factoid"><div class="factoid-icon" style="background:var(--amber-50);">📡</div><div>This can happen on public WiFi networks — like at a restaurant or library — where the connection might not be properly secured.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--teal-50);">🔒</div><div>Look for the <strong>padlock icon</strong> in your browser's address bar. That means the website is encrypted — your data is turned into a secret code that bad people cannot read.</div></div>
+        <div class="callout warn"><div class="callout-ico">⚠</div><div>Be extra careful about typing passwords on public WiFi. If you see a warning that the website is not safe — leave immediately!</div></div>
+        <div class="callout good"><div class="callout-ico">✓</div><div><strong>Safety rule:</strong> Always look for the padlock before entering any passwords. If it is missing, do not type anything private.</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('hacks',2)">← Back</button><span class="step-counter">4 of 4</span><button class="snav-btn primary" style="background:var(--coral-400);" onclick="goPage('home', document.querySelector('.nav-btn'))">Done — go home ✓</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- VIRUSES -->
+<div id="viruses" class="page">
+  <div class="content">
+    <div class="page-top">
+      <div class="page-chip" style="background:var(--teal-50);border:1px solid var(--teal-100);color:var(--teal-600);">Chapter 2 · Viruses</div>
+      <h2>How Computer Viruses Work</h2>
+      <p>Just like a cold virus spreads from person to person, a computer virus spreads from computer to computer. Tap each step to learn more.</p>
+    </div>
+    <div class="stepper-tabs">
+      <button class="step-tab active" style="background:var(--teal-400);" data-s="viruses" data-i="0" onclick="setStep(this)"><div class="step-num">1</div>What Is It?</button>
+      <button class="step-tab" data-s="viruses" data-i="1" onclick="setStep(this)"><div class="step-num">2</div>How It Gets In</button>
+      <button class="step-tab" data-s="viruses" data-i="2" onclick="setStep(this)"><div class="step-num">3</div>Types of Malware</button>
+      <button class="step-tab" data-s="viruses" data-i="3" onclick="setStep(this)"><div class="step-num">4</div>Stay Protected</button>
+    </div>
+    <div class="step-panel active" data-s="viruses" data-i="0">
+      <div class="step-panel-header"><h3>What is a computer virus?</h3><p>A computer virus is a tiny, sneaky program made by a bad person. Its job is to copy itself and spread — just like a cold spreading between people.</p></div>
+      <div class="step-panel-body">
+        <p style="font-size:0.83rem;color:var(--text-muted);line-height:1.6;margin-bottom:0.85rem;">Once it gets into your computer, here is what it can do:</p>
+        <ul class="cklist">
+          <li><div class="ck n">✕</div>Delete or scramble your files and photos</li>
+          <li><div class="ck n">✕</div>Make your computer run extremely slow</li>
+          <li><div class="ck n">✕</div>Secretly spy on what you type, like passwords</li>
+          <li><div class="ck n">✕</div>Spread itself to other computers through emails or USB drives</li>
+          <li><div class="ck n">✕</div>Show you lots of unwanted advertisements</li>
+        </ul>
+        <div class="callout info" style="margin-top:0.85rem;"><div class="callout-ico">💡</div><div>Viruses are completely invisible to the eye. You cannot see them — but antivirus software can detect and remove them!</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" disabled>← Back</button><span class="step-counter">1 of 4</span><button class="snav-btn primary" style="background:var(--teal-400);" onclick="jump('viruses',1)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="viruses" data-i="1">
+      <div class="step-panel-header"><h3>How does a virus get onto your computer?</h3><p>Viruses hide inside things that look safe or interesting. Here are the most common ways they sneak in.</p></div>
+      <div class="step-panel-body">
+        <div class="factoid"><div class="factoid-icon" style="background:var(--coral-50);">📧</div><div><strong>Email attachments:</strong> A file in an email — like a picture or game — can secretly contain a virus. Never open attachments from people you do not know!</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--amber-50);">🌐</div><div><strong>Bad websites:</strong> Some websites automatically try to download viruses just by you visiting them. Stick to websites you know and trust.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--purple-50);">💾</div><div><strong>USB drives:</strong> Plugging in someone else's USB drive can transfer a virus. Always ask an adult before plugging anything in.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--teal-50);">🎮</div><div><strong>Fake free downloads:</strong> "Get this game for free!" from a strange website might have a virus hiding inside the download.</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('viruses',0)">← Back</button><span class="step-counter">2 of 4</span><button class="snav-btn primary" style="background:var(--teal-400);" onclick="jump('viruses',2)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="viruses" data-i="2">
+      <div class="step-panel-header"><h3>Different kinds of malware</h3><p>"Malware" means any bad program. There are several different kinds, each with a different trick.</p></div>
+      <div class="step-panel-body">
+        <ul class="cklist">
+          <li><div class="ck n">🦠</div><div><strong>Virus</strong> — copies itself and spreads to other files and computers</div></li>
+          <li><div class="ck n">🐛</div><div><strong>Worm</strong> — travels through networks all by itself without any help from you</div></li>
+          <li><div class="ck n">🐴</div><div><strong>Trojan</strong> — hides inside something helpful (like a free app) but does harmful things</div></li>
+          <li><div class="ck n">🕵</div><div><strong>Spyware</strong> — secretly watches everything you do and sends it to the bad person</div></li>
+          <li><div class="ck n">💰</div><div><strong>Ransomware</strong> — locks all your files and demands money to unlock them</div></li>
+        </ul>
+        <div class="callout note" style="margin-top:0.85rem;"><div class="callout-ico">💬</div><div>Ransomware is especially dangerous. It is always a good idea to have backups of important files — ask a parent about this!</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('viruses',1)">← Back</button><span class="step-counter">3 of 4</span><button class="snav-btn primary" style="background:var(--teal-400);" onclick="jump('viruses',3)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="viruses" data-i="3">
+      <div class="step-panel-header"><h3>How to stay protected</h3><p>The good news: staying safe from viruses is simple if you follow these rules every day!</p></div>
+      <div class="step-panel-body">
+        <ul class="cklist">
+          <li><div class="ck y">✓</div>Use antivirus software — it works like a security guard for your computer</li>
+          <li><div class="ck y">✓</div>Keep your computer and apps updated — updates often fix security problems</li>
+          <li><div class="ck y">✓</div>Do not download things from websites you do not trust</li>
+          <li><div class="ck y">✓</div>Do not click on pop-up ads that say "You won a prize!"</li>
+          <li><div class="ck y">✓</div>Ask an adult before installing any new program</li>
+          <li><div class="ck y">✓</div>Keep copies of important files backed up somewhere safe</li>
+        </ul>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('viruses',2)">← Back</button><span class="step-counter">4 of 4</span><button class="snav-btn primary" style="background:var(--coral-400);" onclick="goPage('home', document.querySelector('.nav-btn'))">Done — go home ✓</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- SCAREWARE -->
+<div id="scare" class="page">
+  <div class="content">
+    <div class="page-top">
+      <div class="page-chip" style="background:var(--purple-50);border:1px solid var(--purple-100);color:var(--purple-600);">Chapter 3 · Scareware</div>
+      <h2>What Is Scareware?</h2>
+      <p>Scareware uses fear to control you. It wants you to panic so you do something you should not. Let's break it down step by step.</p>
+    </div>
+    <div class="stepper-tabs">
+      <button class="step-tab active" style="background:var(--purple-400);" data-s="scare" data-i="0" onclick="setStep(this)"><div class="step-num">1</div>How It Works</button>
+      <button class="step-tab" data-s="scare" data-i="1" onclick="setStep(this)"><div class="step-num">2</div>Warning Signs</button>
+      <button class="step-tab" data-s="scare" data-i="2" onclick="setStep(this)"><div class="step-num">3</div>Types</button>
+      <button class="step-tab" data-s="scare" data-i="3" onclick="setStep(this)"><div class="step-num">4</div>Exploitation</button>
+      <button class="step-tab" data-s="scare" data-i="4" onclick="setStep(this)"><div class="step-num">5</div>What To Do</button>
+    </div>
+    <div class="step-panel active" data-s="scare" data-i="0">
+      <div class="step-panel-header"><h3>How scareware works</h3><p>Scareware is a fake warning that pops up on your screen, designed to make you feel scared so you click something or buy something without thinking carefully.</p></div>
+      <div class="step-panel-body">
+        <div class="callout warn"><div class="callout-ico">⚠</div><div>A big scary red pop-up appears: <strong>"YOUR COMPUTER HAS 47 VIRUSES! CLICK HERE NOW OR YOUR FILES WILL BE DESTROYED!"</strong> — This is completely fake.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--coral-50);">🎭</div><div>If you click it, one of two things happens: it either tries to install a real virus, or it asks you to pay money for a fake "security program" that does nothing at all.</div></div>
+        <div class="callout info"><div class="callout-ico">💡</div><div><strong>Important:</strong> Your computer is almost certainly fine. The pop-up has no idea what is on your computer — it is just guessing to scare you into clicking.</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" disabled>← Back</button><span class="step-counter">1 of 5</span><button class="snav-btn primary" style="background:var(--purple-400);" onclick="jump('scare',1)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="scare" data-i="1">
+      <div class="step-panel-header"><h3>Warning signs to look for</h3><p>Once you know the pattern of scareware, you will recognize it immediately. Every scareware message has these signs.</p></div>
+      <div class="step-panel-body">
+        <ul class="cklist">
+          <li><div class="ck n">!</div>It appears suddenly as a pop-up — you did not ask for it</li>
+          <li><div class="ck n">!</div>It uses very scary, urgent language like "IMMEDIATE ACTION REQUIRED"</li>
+          <li><div class="ck n">!</div>It shows a dramatic number of "viruses found" like 47 or 112</li>
+          <li><div class="ck n">!</div>It flashes bright colors, plays alarm sounds, or spins</li>
+          <li><div class="ck n">!</div>It asks you to call a phone number right away</li>
+          <li><div class="ck n">!</div>It tries to stop you from closing it or going back</li>
+        </ul>
+        <div class="callout good" style="margin-top:0.85rem;"><div class="callout-ico">✓</div><div>Real antivirus programs are calm and quiet. They do not flash, scream, or try to rush you. They are already installed — they do not pop up from random websites!</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('scare',0)">← Back</button><span class="step-counter">2 of 5</span><button class="snav-btn primary" style="background:var(--purple-400);" onclick="jump('scare',2)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="scare" data-i="2">
+      <div class="step-panel-header"><h3>Different types of scareware</h3><p>Scareware comes in several forms, but they all use the same trick — fear.</p></div>
+      <div class="step-panel-body">
+        <div class="factoid"><div class="factoid-icon" style="background:var(--coral-50);">💻</div><div><strong>Fake virus scanners</strong> — pretend to scan your computer and "find" fake viruses to frighten you into buying something</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--amber-50);">📞</div><div><strong>Tech support scams</strong> — show a fake warning and a phone number; a real person then tries to trick you on the phone</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--teal-50);">🔒</div><div><strong>Fake lock screens</strong> — pretend your screen is locked and claim you broke a law, demanding that you pay money to unlock it</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--purple-50);">🌐</div><div><strong>Browser pop-up scams</strong> — appear inside your web browser, styled to look like an official Windows or Mac warning message</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('scare',1)">← Back</button><span class="step-counter">3 of 5</span><button class="snav-btn primary" style="background:var(--purple-400);" onclick="jump('scare',3)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="scare" data-i="3">
+      <div class="step-panel-header"><h3>Exploitation scareware</h3><p>Some scareware goes beyond just scaring you — it uses your fear to actually cause real harm by tricking you into giving something up.</p></div>
+      <div class="step-panel-body">
+        <div class="factoid"><div class="factoid-icon" style="background:var(--coral-50);">🪤</div><div><strong>Fake payments:</strong> They show a scary pop-up and ask you to pay with a gift card or credit card to "fix" your computer. Real tech companies never ask for payment this way.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--purple-50);">🖥️</div><div><strong>Remote access tricks:</strong> They ask you to install a program that lets them control your computer from far away — then they can steal files and passwords.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--teal-50);">🪪</div><div><strong>Identity theft:</strong> They use the fake emergency to get you to type in your name, address, or passwords — which they then keep and misuse.</div></div>
+        <div class="callout warn" style="margin-top:0.85rem;"><div class="callout-ico">⚠</div><div>Once a bad person has your personal information or remote access to your computer, the damage can be very serious. This is why it is so important to never click or give anything before asking a trusted adult!</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('scare',2)">← Back</button><span class="step-counter">4 of 5</span><button class="snav-btn primary" style="background:var(--purple-400);" onclick="jump('scare',4)">Next →</button></div>
+    </div>
+    <div class="step-panel" data-s="scare" data-i="4">
+      <div class="step-panel-header"><h3>What to do if you see scareware</h3><p>Stay calm — you have a plan. Follow these steps and you will be completely fine!</p></div>
+      <div class="step-panel-body">
+        <ul class="cklist">
+          <li><div class="ck y">✓</div>Stay calm — it is almost certainly fake and your computer is fine</li>
+          <li><div class="ck y">✓</div>Do NOT click anything inside the pop-up window</li>
+          <li><div class="ck y">✓</div>Close the browser tab using the X button at the top of the screen</li>
+          <li><div class="ck y">✓</div>If it will not close, ask an adult to help close it safely</li>
+          <li><div class="ck y">✓</div>Never call any phone number shown in a scary pop-up</li>
+          <li><div class="ck y">✓</div>Never download anything because of a scary message</li>
+          <li><div class="ck y">✓</div>Tell a trusted adult what happened right away</li>
+        </ul>
+        <div class="callout good" style="margin-top:0.85rem;"><div class="callout-ico">⭐</div><div><strong>Golden rule:</strong> The more something tries to scare you, the more suspicious you should be. Real safety tools never panic you!</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('scare',3)">← Back</button><span class="step-counter">5 of 5</span><button class="snav-btn primary" style="background:var(--coral-400);" onclick="goPage('home', document.querySelector('.nav-btn'))">Done — go home ✓</button></div>
+    </div>
+  </div>
+  <footer>Made with Claude · Cybersecurity Education for Young Learners</footer>
+</div>
+
+<!-- EXPLOITATION -->
+<div id="exploit" class="page">
+  <div class="content">
+    <div class="page-top">
+      <div class="page-chip" style="background:var(--amber-50);border:1px solid var(--amber-100);color:var(--amber-600);">Chapter 4 · Exploitation</div>
+      <h2>Exploiting Legitimate Tools</h2>
+      <p>Sometimes bad people do not use viruses or fake websites. Instead, they hijack normal, everyday tools — things that are supposed to be helpful — and use them to trick you.</p>
+    </div>
+    <div class="stepper-tabs">
+      <button class="step-tab active" style="background:var(--amber-400);" data-s="exploit" data-i="0" onclick="setStep(this)"><div class="step-num">1</div>What Is It?</button>
+      <button class="step-tab" data-s="exploit" data-i="1" onclick="setStep(this)"><div class="step-num">2</div>Browser Notifications</button>
+      <button class="step-tab" data-s="exploit" data-i="2" onclick="setStep(this)"><div class="step-num">3</div>Other Tools Abused</button>
+      <button class="step-tab" data-s="exploit" data-i="3" onclick="setStep(this)"><div class="step-num">4</div>Stay Protected</button>
+    </div>
+
+    <div class="step-panel active" data-s="exploit" data-i="0">
+      <div class="step-panel-header"><h3>What does "exploiting legitimate tools" mean?</h3><p>A legitimate tool is something real and normal — like browser notifications, calendar invites, or search results. Exploitation means a bad person twists that normal tool into something harmful.</p></div>
+      <div class="step-panel-body">
+        <div class="factoid"><div class="factoid-icon" style="background:var(--amber-50);">🔧</div><div><strong>Why do bad people do this?</strong> Because normal tools are already trusted by your computer and browser — so they can bypass security checks that would normally block suspicious programs.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--teal-50);">🎭</div><div>It is like a stranger sneaking into a party by wearing a staff uniform. The uniform is real, but the person wearing it has bad intentions.</div></div>
+        <div class="callout info"><div class="callout-ico">💡</div><div>This makes exploitation especially tricky — because the tool doing the harm is something your device already trusts. That is why learning to recognize it is so important!</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" disabled>← Back</button><span class="step-counter">1 of 4</span><button class="snav-btn primary" style="background:var(--amber-400);" onclick="jump('exploit',1)">Next →</button></div>
+    </div>
+
+    <div class="step-panel" data-s="exploit" data-i="1">
+      <div class="step-panel-header"><h3>Browser notifications</h3><p>Browser notifications are a real feature — websites can ask permission to send you pop-up alerts. But bad websites trick you into saying yes, then spam you with fake warnings.</p></div>
+      <div class="step-panel-body">
+        <div class="callout warn"><div class="callout-ico">⚠</div><div><strong>How the trick works:</strong> A website shows a pop-up that says "Click Allow to prove you are not a robot" or "Click Allow to watch the video." Once you click Allow, they can send scary fake alerts to your screen any time — even when you are not on that website!</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--coral-50);">🔔</div><div>These fake notifications often look exactly like real system alerts. They might say "VIRUS DETECTED" or "Your computer is at risk!" — but they are just browser notifications, not real warnings.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--amber-50);">👀</div><div>Real websites that need notifications — like news sites or school tools — will show a small browser bar at the top asking permission. They will not block you from the page or trick you into clicking.</div></div>
+        <div class="callout good"><div class="callout-ico">✓</div><div><strong>Safety rule:</strong> Almost always click "Block" or "Don't Allow" when a website asks to send you notifications — especially if you do not know the website well. If you accidentally allowed it, ask an adult to help you remove it in browser settings.</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('exploit',0)">← Back</button><span class="step-counter">2 of 4</span><button class="snav-btn primary" style="background:var(--amber-400);" onclick="jump('exploit',2)">Next →</button></div>
+    </div>
+
+    <div class="step-panel" data-s="exploit" data-i="2">
+      <div class="step-panel-header"><h3>Other normal tools that get abused</h3><p>Browser notifications are just one example. Here are other everyday tools that bad people sometimes hijack.</p></div>
+      <div class="step-panel-body">
+        <div class="factoid"><div class="factoid-icon" style="background:var(--amber-50);">🔍</div><div><strong>Search engine ads:</strong> When you search for something, the first results are sometimes paid ads. Bad people pay to put fake websites at the top of search results so they look official.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--purple-50);">📅</div><div><strong>Calendar invites:</strong> Spam invites get added to your calendar automatically, with links that say "You have won a prize — click here to claim it!" The calendar feature is real, but the invite is fake.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--teal-50);">📲</div><div><strong>App permissions:</strong> A game or app asks for permission to access your camera, microphone, or contacts — far more than it actually needs. The app is real, but it is collecting information it should not have.</div></div>
+        <div class="factoid"><div class="factoid-icon" style="background:var(--coral-50);">📧</div><div><strong>Email auto-fill:</strong> Your browser remembers email addresses to help you type faster. Some bad websites are designed to secretly grab that saved info without you noticing.</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('exploit',1)">← Back</button><span class="step-counter">3 of 4</span><button class="snav-btn primary" style="background:var(--amber-400);" onclick="jump('exploit',3)">Next →</button></div>
+    </div>
+
+    <div class="step-panel" data-s="exploit" data-i="3">
+      <div class="step-panel-header"><h3>How to protect yourself</h3><p>Once you know how these tricks work, you have the power to stop them. Here is what to do.</p></div>
+      <div class="step-panel-body">
+        <ul class="cklist">
+          <li><div class="ck y">✓</div>Always click "Block" or "Don't Allow" when unknown websites ask to send notifications</li>
+          <li><div class="ck y">✓</div>Scroll past the top search results — real official websites are usually not the first ads you see</li>
+          <li><div class="ck y">✓</div>Delete calendar invites from people you do not know without clicking any links inside them</li>
+          <li><div class="ck y">✓</div>When installing an app, check what permissions it is asking for — a game does not need your contacts!</li>
+          <li><div class="ck y">✓</div>Ask an adult to review your browser notification settings and remove any websites you do not recognize</li>
+          <li><div class="ck y">✓</div>If a tool or feature is behaving strangely, tell a trusted adult before clicking anything</li>
+        </ul>
+        <div class="callout good" style="margin-top:0.85rem;"><div class="callout-ico">⭐</div><div><strong>Remember:</strong> The tool being used is real — that is what makes this tricky. Your superpower is pausing and asking "Did I actually ask for this?" before trusting it.</div></div>
+      </div>
+      <div class="step-nav"><button class="snav-btn" onclick="jump('exploit',2)">← Back</button><span class="step-counter">4 of 4</span><button class="snav-btn primary" style="background:var(--coral-400);" onclick="goPage('home', document.querySelector('.nav-btn'))">Done — go home ✓</button></div>
+    </div>
+  </div>
+  <footer>Made with Claude · Cybersecurity Education for Young Learners</footer>
+</div>
+
+<script>
+const COLORS = { hacks:'var(--coral-400)', viruses:'var(--teal-400)', scare:'var(--purple-400)', exploit:'var(--amber-400)' };
+
+function goPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function setStep(btn) {
+  const s = btn.dataset.s;
+  const i = parseInt(btn.dataset.i);
+  const color = COLORS[s] || 'var(--coral-400)';
+  document.querySelectorAll(`.step-tab[data-s="${s}"]`).forEach(t => {
+    t.classList.remove('active');
+    t.style.background = ''; t.style.color = ''; t.style.borderColor = '';
+  });
+  btn.classList.add('active');
+  btn.style.background = color; btn.style.color = 'white'; btn.style.borderColor = 'transparent';
+  document.querySelectorAll(`.step-panel[data-s="${s}"]`).forEach(p => p.classList.remove('active'));
+  document.querySelector(`.step-panel[data-s="${s}"][data-i="${i}"]`).classList.add('active');
+}
+
+function jump(s, i) {
+  const tab = document.querySelector(`.step-tab[data-s="${s}"][data-i="${i}"]`);
+  if (tab) setStep(tab);
+}
+</script>
+</body>
+</html>
